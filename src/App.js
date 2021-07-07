@@ -23,35 +23,48 @@ class App extends React.Component {
 
 
   }
-  componentDidMount() {
 
+  componentDidMount() {
     axios.get('https://swapi.dev/api/people/')
-      .then(response => {
-        const charactersList = response.data.results;
-        let rowId = this.state.charactersList.name;
-        const newRow = {
-          id: rowId,
-          character: this.state.charactersList.name,
-          birthday: this.state.charactersList.birth_year,
-          height: this.state.charactersList.height,
-          mass: this.state.charactersList.mass,
-          homeworld: this.state.charactersList.homeworld,
-          species: this.state.charactersList.species,
+      .then(async (response) => {
+        const characters = response.data.results;
+        console.log('These are the characters results:', characters)
+
+        for (const character of characters) {
+          const planet = character.homeworld;
+          const species = character.species;
+          const homeworldResponse = await axios.get(planet)
+          character.homeworld = homeworldResponse.data.name
+
+
+          const speciesResponse = await axios.get(species)
+          if (speciesResponse === '') {
+            character.species = "Human"
+          } else {
+            character.species = speciesResponse.data.name;
+            console.log('species are:', speciesResponse)
+          }
+
+
+
+
+
+          this.setState({
+            charactersList: characters,
+            character: character.name,
+            birthday: character.birth_year,
+            height: character.height,
+            mass: character.mass,
+            homeworld: character.homeworld,
+            species: character.species
+          })
+
+
         }
-        console.log("the data is: ", charactersList)
-        this.setState({
-          charactersList: [...this.state.charactersList, newRow],
-          character: charactersList.name,
-          birthday: charactersList.birth_year,
-          height: charactersList.height,
-          mass: charactersList.mass,
-          homeworld: charactersList.homeworld,
-          species: charactersList.species
-        })
       })
       .catch(error => {
-        console.log(error);
-      });
+        console.log(error)
+      })
   }
   render() {
     return (
