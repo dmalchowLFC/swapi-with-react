@@ -28,27 +28,18 @@ class App extends React.Component {
     axios.get('https://swapi.dev/api/people/')
       .then(async (response) => {
         const characters = response.data.results;
-        console.log('These are the characters results:', characters)
 
         for (const character of characters) {
           const planet = character.homeworld;
           const species = character.species;
           const homeworldResponse = await axios.get(planet)
           character.homeworld = homeworldResponse.data.name
-
-
           const speciesResponse = await axios.get(species)
-          if (speciesResponse === '') {
+          if (character.species.length === 0) {
             character.species = "Human"
           } else {
             character.species = speciesResponse.data.name;
-            console.log('species are:', speciesResponse)
           }
-
-
-
-
-
           this.setState({
             charactersList: characters,
             character: character.name,
