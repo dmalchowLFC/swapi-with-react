@@ -4,6 +4,7 @@ import React from "react"
 import CharactersTable from './components/CharactersTable';
 import SearchBar from './components/SearchBar'
 
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -14,7 +15,8 @@ class App extends React.Component {
       mass: '',
       homeworld: '',
       species: '',
-      charactersList: []
+      charactersList: [],
+      nameList: []
     }
 
   }
@@ -28,8 +30,8 @@ class App extends React.Component {
     axios.get('https://swapi.dev/api/people/')
       .then(async (response) => {
         const characters = response.data.results;
-
         for (const character of characters) {
+          let nameList = [];
           const planet = character.homeworld;
           const species = character.species;
           const homeworldResponse = await axios.get(planet)
@@ -37,7 +39,9 @@ class App extends React.Component {
           const speciesResponse = await axios.get(species)
           if (character.species.length === 0) {
             character.species = "Human"
+            nameList.push(character.name)
           } else {
+            nameList.push(character.name)
             character.species = speciesResponse.data.name;
           }
           this.setState({
@@ -47,10 +51,9 @@ class App extends React.Component {
             height: character.height,
             mass: character.mass,
             homeworld: character.homeworld,
-            species: character.species
+            species: character.species,
+            nameList: nameList
           })
-
-
         }
       })
       .catch(error => {
@@ -60,7 +63,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <SearchBar handleSubmit={this.handleSubmit} />
+        <SearchBar options={this.state.nameList} />
         <CharactersTable charactersList={this.state.charactersList} />
       </div>
     )

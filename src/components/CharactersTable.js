@@ -3,8 +3,8 @@ import React from "react"
 function CharactersTable(props) {
     return (
         <div>
-            <table>
-                <thead>
+            <table class="table table-striped">
+                <thead class="thead-dark">
                     <tr>
                         <th className="tableHeads">Name</th>
                         <th className="tableHeads">Birth Date</th>
