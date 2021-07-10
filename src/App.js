@@ -16,22 +16,42 @@ class App extends React.Component {
       homeworld: '',
       species: '',
       charactersList: [],
-      nameList: []
+      nameList: [],
+      next: '',
+      previous: '',
+      searchQuery: ''
     }
+    this.componentDidMount = this.componentDidMount.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleSearchChange = this.handleSearchChange.bind(this)
 
   }
-  handleSubmit(event) {
-    event.preventDefault();
 
 
+  handleChange(event) {
+    const { name, value } = event.target
+    this.setState({
+      [name]: value
+    })
   }
+  handleSearchChange(event) {
+    this.setState({
+      searchQuery: event.target.value
+    })
+    console.log(event.target)
+  }
+
 
   componentDidMount() {
     axios.get('https://swapi.dev/api/people/')
       .then(async (response) => {
         const characters = response.data.results;
+        const next = response.data.next
+        const prev = response.data.previous
+
+        let nameList = []
         for (const character of characters) {
-          let nameList = [];
           const planet = character.homeworld;
           const species = character.species;
           const homeworldResponse = await axios.get(planet)
@@ -46,13 +66,16 @@ class App extends React.Component {
           }
           this.setState({
             charactersList: characters,
+            id: character.name,
             character: character.name,
             birthday: character.birth_year,
             height: character.height,
             mass: character.mass,
             homeworld: character.homeworld,
             species: character.species,
-            nameList: nameList
+            nameList: nameList,
+            next: next,
+            prev: prev
           })
         }
       })
@@ -60,10 +83,29 @@ class App extends React.Component {
         console.log(error)
       })
   }
+  async handleSubmit(event) {
+    event.preventDefault();
+    const search = await axios.get(`https://swapi.dev/api/people/?search=${this.state.seachQuery}`)
+    console.log(search)
+    //   const searchQuery = this.state.searchQuery
+    //   const soloLine = this.state.charactersList.filter(character => character.id === searchQuery)
+
+    //   console.log(soloLine)
+    //   console.log(searchQuery)
+
+    //   if (searchQuery in this.state.nameList) {
+
+    //     this.setState({
+    //       charactersList: soloLine
+    //     })
+    //   } else {
+    //     alert("Name not found")
+    //   }
+  }
   render() {
     return (
       <div>
-        <SearchBar options={this.state.nameList} />
+        <SearchBar nameList={this.state.nameList} handleSearchChange={this.handleSearchChange} state={this.state} handleSubmit={this.handleSubmit} />
         <CharactersTable charactersList={this.state.charactersList} />
       </div>
     )

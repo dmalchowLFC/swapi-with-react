@@ -3,8 +3,8 @@ import React from "react"
 function CharactersTable(props) {
     return (
         <div>
-            <table class="table table-striped">
-                <thead class="thead-dark">
+            <table className="table table-striped">
+                <thead className="thead-dark">
                     <tr>
                         <th className="tableHeads">Name</th>
                         <th className="tableHeads">Birth Date</th>
@@ -17,7 +17,7 @@ function CharactersTable(props) {
                 <tbody>
                     {props.charactersList.map(character => {
                         return (
-                            <tr key={character.id}>
+                            <tr key={character.name}>
                                 <td>{character.name}</td>
                                 <td>{character.birth_year}</td>
                                 <td>{character.height}</td>
