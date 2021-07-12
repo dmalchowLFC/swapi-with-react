@@ -24,23 +24,17 @@ class App extends React.Component {
     this.componentDidMount = this.componentDidMount.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleSearchChange = this.handleSearchChange.bind(this)
 
   }
 
 
   handleChange(event) {
-    const { name, value } = event.target
-    this.setState({
-      [name]: value
-    })
-  }
-  handleSearchChange(event) {
     this.setState({
       searchQuery: event.target.value
     })
-    console.log(event.target)
+    console.log("This is the state of searchQuery: ", this.state.searchQuery)
   }
+
 
 
   componentDidMount() {
@@ -86,7 +80,7 @@ class App extends React.Component {
   async handleSubmit(event) {
     event.preventDefault();
     const search = await axios.get(`https://swapi.dev/api/people/?search=${this.state.seachQuery}`)
-    console.log(search)
+    console.log("This is the submit search: ", search)
     //   const searchQuery = this.state.searchQuery
     //   const soloLine = this.state.charactersList.filter(character => character.id === searchQuery)
 
@@ -105,7 +99,11 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <SearchBar nameList={this.state.nameList} handleSearchChange={this.handleSearchChange} state={this.state} handleSubmit={this.handleSubmit} />
+        <SearchBar
+          nameList={this.state.nameList}
+          handleChange={this.handleChange}
+          searchQuery={this.state.searchQuery}
+          handleSubmit={this.handleSubmit} />
         <CharactersTable charactersList={this.state.charactersList} />
       </div>
     )

@@ -5,7 +5,11 @@ const SearchBar = (props) => {
         <div>
             <form onSubmit={props.handleSubmit}>
                 <label> Search for a specific character:</label>
-                <input type="text" name="searchQuery" onChange={props.handleSearchChange} value={this.state.searchQuery} />
+                <input
+                    type="text"
+                    name="searchQuery"
+                    onChange={props.handleChange}
+                    value={props.searchQuery} />
                 <button type="submit" className="btn btn-dark" >Search</button>
             </form>
 
