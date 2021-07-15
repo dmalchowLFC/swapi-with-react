@@ -102,6 +102,7 @@ class App extends React.Component {
           handleChange={this.handleChange}
           searchQuery={this.state.searchQuery}
           handleSubmit={this.handleSubmit} />
+        <br></br>
         <CharactersTable charactersList={this.state.charactersList} />
       </div >
     )

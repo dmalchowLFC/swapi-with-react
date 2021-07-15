@@ -3,15 +3,15 @@ import React from "react"
 function CharactersTable(props) {
     return (
         <div>
-            <table className="table table-striped text-white">
+            <table className="table table-striped text-warning font-weight-bold">
                 <thead className="thead-dark">
                     <tr>
-                        <th className="tableHeads">Name</th>
-                        <th className="tableHeads">Birth Date</th>
-                        <th className="tableHeads">Height</th>
-                        <th className="tableHeads">Mass</th>
-                        <th className="tableHeads">Homeworld</th>
-                        <th className="tableHeads">Species</th>
+                        <th className="tableHeads text-warning">Name</th>
+                        <th className="tableHeads text-warning">Birth Date</th>
+                        <th className="tableHeads text-warning">Height</th>
+                        <th className="tableHeads text-warning">Mass</th>
+                        <th className="tableHeads text-warning">Homeworld</th>
+                        <th className="tableHeads text-warning">Species</th>
                     </tr>
                 </thead>
                 <tbody>
