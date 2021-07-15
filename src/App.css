@@ -46,3 +46,13 @@
   width: 15vw;
   align-items: center;
 }
+
+.tableHeader {
+  align-self: center;
+  text-align: center;
+}
+
+.theApp {
+  background-image: url('./spaceImage.jpeg');
+  height: 100vh;
+}

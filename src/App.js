@@ -3,6 +3,7 @@ import axios from 'axios';
 import React from "react"
 import CharactersTable from './components/CharactersTable';
 import SearchBar from './components/SearchBar'
+import Header from './components/Header'
 
 
 class App extends React.Component {
@@ -16,9 +17,6 @@ class App extends React.Component {
       homeworld: '',
       species: '',
       charactersList: [],
-      nameList: [],
-      next: '',
-      previous: '',
       searchQuery: ''
     }
     this.componentDidMount = this.componentDidMount.bind(this)
@@ -32,7 +30,6 @@ class App extends React.Component {
     this.setState({
       searchQuery: event.target.value
     })
-    console.log("This is the state of searchQuery: ", this.state.searchQuery)
   }
 
 
@@ -41,10 +38,6 @@ class App extends React.Component {
     axios.get('https://swapi.dev/api/people/')
       .then(async (response) => {
         const characters = response.data.results;
-        const next = response.data.next
-        const prev = response.data.previous
-
-        let nameList = []
         for (const character of characters) {
           const planet = character.homeworld;
           const species = character.species;
@@ -53,9 +46,7 @@ class App extends React.Component {
           const speciesResponse = await axios.get(species)
           if (character.species.length === 0) {
             character.species = "Human"
-            nameList.push(character.name)
           } else {
-            nameList.push(character.name)
             character.species = speciesResponse.data.name;
           }
           this.setState({
@@ -67,9 +58,6 @@ class App extends React.Component {
             mass: character.mass,
             homeworld: character.homeworld,
             species: character.species,
-            nameList: nameList,
-            next: next,
-            prev: prev
           })
         }
       })
@@ -79,33 +67,43 @@ class App extends React.Component {
   }
   async handleSubmit(event) {
     event.preventDefault();
-    const search = await axios.get(`https://swapi.dev/api/people/?search=${this.state.seachQuery}`)
-    console.log("This is the submit search: ", search)
-    //   const searchQuery = this.state.searchQuery
-    //   const soloLine = this.state.charactersList.filter(character => character.id === searchQuery)
+    const search = await axios.get(`https://swapi.dev/api/people/?search=${this.state.searchQuery}`)
+    const searchResults = search.data.results
+    for (const person of searchResults) {
+      const planet = person.homeworld;
+      const species = person.species;
+      const homeworldResponse = await axios.get(planet);
+      person.homeworld = homeworldResponse.data.name;
+      const speciesResponse = await axios.get(species);
+      if (person.species.length === 0) {
+        person.species = "Human"
+      } else {
+        person.species = speciesResponse.data.name;
+      }
+      this.setState({
+        charactersList: searchResults,
+        id: person.name,
+        character: person.name,
+        birthday: person.birth_year,
+        height: person.height,
+        mass: person.mass,
+        homeworld: person.homeworld,
+        species: person.species
+      })
+    }
 
-    //   console.log(soloLine)
-    //   console.log(searchQuery)
 
-    //   if (searchQuery in this.state.nameList) {
-
-    //     this.setState({
-    //       charactersList: soloLine
-    //     })
-    //   } else {
-    //     alert("Name not found")
-    //   }
   }
   render() {
     return (
-      <div>
+      <div className="theApp">
+        < Header />
         <SearchBar
-          nameList={this.state.nameList}
           handleChange={this.handleChange}
           searchQuery={this.state.searchQuery}
           handleSubmit={this.handleSubmit} />
         <CharactersTable charactersList={this.state.charactersList} />
-      </div>
+      </div >
     )
   }
 

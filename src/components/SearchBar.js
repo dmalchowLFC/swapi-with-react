@@ -4,13 +4,14 @@ const SearchBar = (props) => {
     return (
         <div>
             <form onSubmit={props.handleSubmit}>
-                <label> Search for a specific character:</label>
+                <label className="col-sm-4 col-form-label text-white" for="searchQuery"> Search for a specific character:</label>
                 <input
                     type="text"
                     name="searchQuery"
                     onChange={props.handleChange}
-                    value={props.searchQuery} />
-                <button type="submit" className="btn btn-dark" >Search</button>
+                    value={props.searchQuery}
+                    className="form col-md-6" />
+                <button type="submit" className="btn btn-dark col-sm-1" >Search</button>
             </form>
 
         </div>
