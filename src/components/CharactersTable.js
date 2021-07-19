@@ -1,6 +1,13 @@
 import React from "react"
 
 function CharactersTable(props) {
+    if (props.isLoading) return (
+        <div class="d-flex justify-content-center">
+            <div className="spinner-border text-warning" style={{ width: "15rem", height: "15rem" }} role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+        </div>
+    )
     return (
         <div>
             <table className="table table-striped text-warning font-weight-bold">

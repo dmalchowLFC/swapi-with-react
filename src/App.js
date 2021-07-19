@@ -10,21 +10,21 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      character: '',
-      birthday: '',
-      height: '',
-      mass: '',
-      homeworld: '',
-      species: '',
       charactersList: [],
-      searchQuery: ''
+      searchQuery: '',
+      isLoading: false
     }
     this.componentDidMount = this.componentDidMount.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-
+    this.getSpecies = this.getSpecies.bind(this)
+    this.getCharacters = this.getCharacters.bind(this)
+    this.getHomeWorld = this.getHomeWorld.bind(this)
   }
 
+  componentDidMount() {
+    this.getCharacters("https://swapi.dev/api/people/")
+  }
 
   handleChange(event) {
     this.setState({
@@ -32,67 +32,44 @@ class App extends React.Component {
     })
   }
 
-
-
-  componentDidMount() {
-    axios.get('https://swapi.dev/api/people/')
+  async getCharacters(URL) {
+    this.setState({ isLoading: true })
+    axios.get(URL)
       .then(async (response) => {
         const characters = response.data.results;
         for (const character of characters) {
-          const planet = character.homeworld;
-          const species = character.species;
-          const homeworldResponse = await axios.get(planet)
-          character.homeworld = homeworldResponse.data.name
-          const speciesResponse = await axios.get(species)
-          if (character.species.length === 0) {
-            character.species = "Human"
-          } else {
-            character.species = speciesResponse.data.name;
-          }
-          this.setState({
-            charactersList: characters,
-            id: character.name,
-            character: character.name,
-            birthday: character.birth_year,
-            height: character.height,
-            mass: character.mass,
-            homeworld: character.homeworld,
-            species: character.species,
-          })
+          const planetURL = character.homeworld;
+          const speciesURL = character.species;
+          character.homeworld = await this.getHomeWorld(planetURL)
+          character.species = await this.getSpecies(speciesURL)
         }
+        this.setState({
+          charactersList: characters,
+        })
       })
       .catch(error => {
         console.log(error)
       })
+      .finally(() => this.setState({ isLoading: false }))
   }
+
+  async getHomeWorld(URL) {
+    const homeworldResponse = await axios.get(URL)
+    return homeworldResponse.data.name
+  }
+
+  async getSpecies(URL) {
+    if (URL.length === 0) {
+      return "Human"
+    } else {
+      const speciesResponse = await axios.get(URL)
+      return speciesResponse.data.name;
+    }
+  }
+
   async handleSubmit(event) {
     event.preventDefault();
-    const search = await axios.get(`https://swapi.dev/api/people/?search=${this.state.searchQuery}`)
-    const searchResults = search.data.results
-    for (const person of searchResults) {
-      const planet = person.homeworld;
-      const species = person.species;
-      const homeworldResponse = await axios.get(planet);
-      person.homeworld = homeworldResponse.data.name;
-      const speciesResponse = await axios.get(species);
-      if (person.species.length === 0) {
-        person.species = "Human"
-      } else {
-        person.species = speciesResponse.data.name;
-      }
-      this.setState({
-        charactersList: searchResults,
-        id: person.name,
-        character: person.name,
-        birthday: person.birth_year,
-        height: person.height,
-        mass: person.mass,
-        homeworld: person.homeworld,
-        species: person.species
-      })
-    }
-
-
+    this.getCharacters(`https://swapi.dev/api/people/?search=${this.state.searchQuery}`)
   }
   render() {
     return (
@@ -103,7 +80,7 @@ class App extends React.Component {
           searchQuery={this.state.searchQuery}
           handleSubmit={this.handleSubmit} />
         <br></br>
-        <CharactersTable charactersList={this.state.charactersList} />
+        <CharactersTable isLoading={this.state.isLoading} charactersList={this.state.charactersList} />
       </div >
     )
   }
