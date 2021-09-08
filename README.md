@@ -3,7 +3,7 @@
 An interactive page that lets you search for info about your favorite Star Wars characters
 
 ## Try it for yourself
-Click link [here](https://dmalchowlfc.github.io/swapi-with-react/)
+Click link [here](https://swapi-with-react.herokuapp.com/)
 
 ## Preview
 <img src="Swapi-image.png">
